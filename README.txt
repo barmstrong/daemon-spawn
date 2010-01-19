@@ -1,72 +1,8 @@
-= daemon-spawn
+A slight motification of the excellent daemon-spawn gem found here, to make it easier to run multiple worker.
 
 * http://github.com/alexvollmer/daemon-spawn
 
-== DESCRIPTION:
 
-Daemon launching and management made dead simple.
-
-With daemon-spawn you can start, stop and restart processes that run
-in the background. Processed are tracked by a simple PID file written
-to disk.
-
-In addition, you can choose to either execute ruby in your daemonized
-process or 'exec' another process altogether (handy for wrapping other
-services).
-
-== SYNOPSIS:
-
-=== WRITING A DAEMON:
-
-To create a new spawner, write a class that extends <tt>DaemonSpawn::Base</tt>
-and provides +start+ and +stop+ methods. For example:
-
-  class MyServer < DaemonSpawn::Base
-
-    def start(args)
-      # process command-line args
-      # start your bad self
-    end
-
-    def stop
-      # stop your bad self
-    end
-  end
-
-  MyServer.spawn!(:log_file => '/var/log/echo_server.log',
-                  :pid_file => '/var/run/echo_server.pid',
-                  :sync_log => true,
-                  :working_dir => File.dirname(__FILE__))
-
-If you need command-line parameters, any arguments passed after one of
-the commands (start, stop, status or restart) will be passed to the
-+start+ method.
-
-The <tt>spawn!</tt> method takes a hash of symbolized keys. At a minimum you
-_must_ specify the <tt>:working_dir</tt> option. You can also override
-the default locations for the log and PID files.
-
-See the <tt>examples</tt> directory for working examples.
-
-=== RUNNING A DAEMON:
-
-Let's say that you have the example script listed above in
-<tt>bin/my_server</tt>. Here are the commands for starting, querying
-the status, restarting and stopping the daemon:
-
-  bin/my_server start
-  bin/my_server status
-  bin/my_server restart
-  bin/my_server stop
-
-Note that if any additional arguments are passed to either
-<tt>start</tt> or <tt>restart</tt> those will be passed to the +start+
-method of an instance of your daemon class.
-
-
-== REQUIREMENTS:
-
-None!
 
 == INSTALL:
 
