@@ -56,7 +56,7 @@ module DaemonSpawn
       end
     else
       puts "Pid file not found. Is the daemon started?"
-      exit
+#      exit
     end
   rescue Errno::ESRCH
     puts "Pid file found, but process was not running. The daemon may have died."
@@ -127,7 +127,7 @@ module DaemonSpawn
     # args must begin with 'start', 'stop', 'status', or 'restart'.
     # The first token will be removed and any remaining arguments
     # passed to the daemon's start method.
-    def self.spawn!(opts={ }, args=ARGV)
+    def self.spawn!(opts={ }, args=ARGV.dup)
       case args.size > 0 && args.shift
       when 'start'
         daemon = self.new(opts)
