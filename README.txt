@@ -1,12 +1,47 @@
-A slight motification of the excellent daemon-spawn gem found here, to make it easier to run multiple worker.
+A slight motification of the excellent daemon-spawn gem that makes it easier to run multiple workers!
 
-* http://github.com/alexvollmer/daemon-spawn
+Original Gem:  http://github.com/alexvollmer/daemon-spawn
+
+
+== EXAMPLE OF RUNNING MULTIPLE WORKERS:
+
+
+#!/opt/ruby/bin/ruby
+require 'rubygems'
+#my fork of daemon-spawn!
+require 'daemon-spawn'
+
+RAILS_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+
+class ResqueWorker < DaemonSpawn::Base
+  def start(args)
+    ENV['RAILS_ENV'] ||= args.first || 'development'
+    Dir.chdir RAILS_ROOT
+    require File.join('config', 'environment')
+
+    Resque::Worker.new("*").work
+  end
+
+  def stop
+    system("kill `cat #{self.pid_file}`")
+  end
+end
+
+# Change number here to increase/decrease number of workers
+num_workers = 4
+
+num_workers.times do |i|
+  ResqueWorker.spawn!(:log_file => File.join(RAILS_ROOT, "log", "resque_worker_#{i}.log"),
+    :pid_file => File.join(RAILS_ROOT, 'tmp', 'pids', "resque_worker_#{i}.pid"),
+    :sync_log => true,
+    :working_dir => RAILS_ROOT)
+end
 
 
 
 == INSTALL:
 
-* sudo gem install daemon-spawn
+* sudo gem install barmstrong-daemon-spawn
 
 == LICENSE:
 
